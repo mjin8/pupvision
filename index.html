@@ -8,9 +8,9 @@
 <link href="https://fonts.googleapis.com/css2?family=VT323&family=Baloo+2:wght@500;700;800&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
-    --walnut-dark:#a68fd6;
-    --walnut:#c9b3ea;
-    --walnut-light:#e6daf8;
+    --walnut-dark:#c9944f;
+    --walnut:#e8b873;
+    --walnut-light:#f5d9a8;
     --brass:#c9648a;
     --brass-dim:#e39ab3;
     --cream:#3a2d52;
@@ -45,12 +45,20 @@
     display:flex;
     flex-direction:column;
     align-items:center;
-    gap:14px;
+    gap:0px;
+  }
+  @media (max-height:940px) and (min-width:481px){
+    .room{ max-width:520px; }
+  }
+  @media (max-height:800px) and (min-width:481px){
+    .room{ max-width:430px; }
   }
   .brand{
     text-align:center;
   }
   .brand{
+    position:relative;
+    z-index:5;
     background:linear-gradient(160deg,#2e2348,#211934);
     padding:16px 30px 12px;
     border-radius:22px;
@@ -88,15 +96,16 @@
   .tv{
     position:relative;
     width:100%;
+    margin-top:52px;
     background:
       linear-gradient(160deg, var(--walnut-light) 0%, var(--walnut) 45%, var(--walnut-dark) 100%);
     border-radius:38px;
     padding:26px 26px 20px;
     box-shadow:
-      0 30px 55px -20px rgba(143,123,196,0.35),
+      0 30px 55px -20px rgba(180,130,60,0.4),
       inset 0 0 0 2px rgba(255,255,255,0.5),
       inset 0 2px 0 rgba(255,255,255,0.6);
-    border:1px solid #dcccf2;
+    border:1px solid #f0dbb0;
   }
   .tv::before{ /* soft dotted texture */
     content:"";
@@ -122,10 +131,10 @@
     letter-spacing:0.06em;
     font-size:0.8rem;
     color:#fff;
-    background:linear-gradient(180deg, #c8b6ec, #a690dd);
+    background:linear-gradient(180deg, #f0c98a, #dda355);
     padding:5px 12px;
     border-radius:20px;
-    border:1px solid rgba(255,255,255,0.6);
+    border:1px solid rgba(139,90,47,0.25);
   }
   .power{
     display:flex;
@@ -147,7 +156,7 @@
   .screen-area{
     display:flex;
     gap:18px;
-    align-items:flex-start;
+    align-items:stretch;
   }
 
   /* ===== Screen ===== */
@@ -163,7 +172,7 @@
   .screen{
     position:relative;
     width:100%;
-    aspect-ratio:3/4;
+    aspect-ratio:351/514;
     border-radius:32px/26px;
     overflow:hidden;
     background:var(--screen-black);
@@ -207,7 +216,7 @@
     background:#050403;
   }
   .slide-wrap img{
-    width:100%; height:100%; object-fit:contain;
+    width:100%; height:100%; object-fit:cover;
     filter:saturate(1.08) contrast(1.05) brightness(0.98);
   }
   .rgb-split{
@@ -253,21 +262,25 @@
     display:flex;
     align-items:center;
     justify-content:space-between;
+    gap:8px;
     background:linear-gradient(180deg, #362a52, #241b3a);
     border-radius:14px;
     padding:8px 14px;
     box-shadow:inset 0 0 0 1px rgba(255,182,193,0.25), inset 0 0 20px rgba(0,0,0,0.35);
   }
   .vfd-left{
-    display:flex; align-items:baseline; gap:10px;
+    display:flex; align-items:baseline; gap:8px;
+    flex:1 1 auto;
+    min-width:0;
   }
   .vfd-ch{
     font-family:'VT323', monospace;
-    font-size:1.5rem;
+    font-size:1.3rem;
     color:var(--amber);
     text-shadow:0 0 8px rgba(255,148,102,0.75), 0 0 18px rgba(255,148,102,0.35);
     letter-spacing:0.05em;
-    min-width:2.4ch;
+    flex-shrink:0;
+    min-width:2ch;
   }
   .vfd-title{
     font-family:'VT323', monospace;
@@ -277,14 +290,34 @@
     letter-spacing:0.08em;
     white-space:nowrap;
     overflow:hidden;
-    text-overflow:ellipsis;
-    max-width:44vw;
+    position:relative;
+    flex:1 1 auto;
+    min-width:0;
+  }
+  .marquee-track{
+    display:inline-flex;
+    white-space:nowrap;
+    will-change:transform;
+  }
+  .marquee-copy{
+    display:inline-block;
+    padding-right:28px;
+  }
+  .vfd-title.scrolling .marquee-track{
+    animation-name:marqueeScroll;
+    animation-timing-function:linear;
+    animation-iteration-count:infinite;
+  }
+  @keyframes marqueeScroll{
+    from{ transform:translateX(0); }
+    to{ transform:translateX(var(--scroll-dist, -100px)); }
   }
   .vfd-right{
-    display:flex; align-items:center; gap:10px;
+    display:flex; align-items:center; gap:8px;
     font-family:'VT323', monospace;
     font-size:0.95rem;
     color:#c9a8d4;
+    flex-shrink:0;
   }
   .rec-dot{
     width:8px;height:8px;border-radius:50%;
@@ -296,6 +329,7 @@
   /* ===== Side control panel ===== */
   .controls{
     width:96px;
+    min-height:0;
     display:flex;
     flex-direction:column;
     align-items:center;
@@ -308,14 +342,14 @@
     font-weight:700;
     font-size:0.65rem;
     letter-spacing:0.15em;
-    color:#8f7bc4;
+    color:#7a4a26;
   }
   .dial-outer{
     position:relative;
     width:88px; height:88px;
     border-radius:50%;
-    background:radial-gradient(circle at 35% 30%, #f8f2ff, #ddccf5 70%);
-    box-shadow:0 6px 10px rgba(143,123,196,0.25), inset 0 2px 3px rgba(255,255,255,0.8), inset 0 -4px 6px rgba(143,123,196,0.2);
+    background:radial-gradient(circle at 35% 30%, #fff8ec, #f0d093 70%);
+    box-shadow:0 6px 10px rgba(139,90,47,0.25), inset 0 2px 3px rgba(255,255,255,0.8), inset 0 -4px 6px rgba(139,90,47,0.2);
     cursor:pointer;
     user-select:none;
     touch-action:none;
@@ -327,12 +361,12 @@
     position:absolute;
     left:50%; top:50%;
     width:2px; height:8px;
-    background:#8f7bc4;
+    background:#c9944f;
     transform-origin:1px 44px;
   }
   .tick.active{
-    background:#8f6fd4;
-    box-shadow:0 0 4px #8f6fd4;
+    background:#7a4a26;
+    box-shadow:0 0 4px #7a4a26;
   }
   .dial-grip{
     position:absolute;
@@ -341,17 +375,18 @@
     margin:-23px 0 0 -23px;
     border-radius:50%;
     background:radial-gradient(circle at 40% 35%, #ffd166, #ffb347 75%);
-    box-shadow:0 3px 6px rgba(143,111,212,0.35), inset 0 1px 2px rgba(255,255,255,0.6);
+    box-shadow:0 3px 6px rgba(139,90,47,0.35), inset 0 1px 2px rgba(255,255,255,0.6);
     transition:transform 0.35s cubic-bezier(.4,1.8,.5,1);
+    display:flex;
+    align-items:center;
+    justify-content:center;
   }
-  .dial-grip::after{
-    content:"";
-    position:absolute;
-    top:4px; left:50%;
-    width:3px; height:14px;
-    margin-left:-1.5px;
-    background:#a6672f;
-    border-radius:2px;
+  .paw-icon{
+    width:66%;
+    height:66%;
+    display:block;
+    fill:#8a5a2f;
+    filter:drop-shadow(0 1px 1px rgba(0,0,0,0.15));
   }
   .chan-btns{
     display:flex; gap:8px;
@@ -359,20 +394,20 @@
   .cbtn{
     width:38px;height:34px;
     border-radius:12px;
-    border:1px solid rgba(139,122,196,0.25);
-    background:linear-gradient(180deg,#d9cdf2,#bcabe6);
+    border:1px solid rgba(139,90,47,0.25);
+    background:linear-gradient(180deg,#f0c98a,#dda355);
     color:#fff;
     font-family:'Baloo 2',sans-serif;
     font-weight:700;
     font-size:0.85rem;
     letter-spacing:0.05em;
-    box-shadow:0 3px 0 #8f7bc4, inset 0 1px 0 rgba(255,255,255,0.5);
+    box-shadow:0 3px 0 #a6672f, inset 0 1px 0 rgba(255,255,255,0.5);
     cursor:pointer;
     display:flex;align-items:center;justify-content:center;
   }
   .cbtn:active{
     transform:translateY(2px);
-    box-shadow:0 1px 0 #8f7bc4, inset 0 1px 0 rgba(255,255,255,0.5);
+    box-shadow:0 1px 0 #a6672f, inset 0 1px 0 rgba(255,255,255,0.5);
   }
   .vol{
     display:flex; flex-direction:column; align-items:center; gap:6px;
@@ -381,7 +416,7 @@
   .vol-knob{
     width:40px;height:40px;border-radius:50%;
     background:radial-gradient(circle at 40% 35%, #ffd166, #ffb347 75%);
-    box-shadow:0 3px 6px rgba(143,111,212,0.3), inset 0 1px 2px rgba(255,255,255,0.6);
+    box-shadow:0 3px 6px rgba(139,90,47,0.3), inset 0 1px 2px rgba(255,255,255,0.6);
     position:relative;
   }
   .vol-knob::after{
@@ -394,17 +429,25 @@
   }
 
   .speaker{
-    margin-top:16px;
-    display:grid;
-    grid-template-columns:repeat(14, 1fr);
-    gap:5px;
-    padding:0 4px;
+    flex:1 1 auto;
+    min-width:0;
+    min-height:60px;
+    width:100%;
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+    gap:4px;
+    padding:12px 8px;
+    background:linear-gradient(160deg, rgba(107,66,38,0.28), rgba(107,66,38,0.14));
+    border-radius:14px;
+    box-shadow:inset 0 2px 6px rgba(58,33,10,0.35), inset 0 -1px 0 rgba(255,255,255,0.3);
   }
   .speaker span{
-    width:100%; aspect-ratio:1;
-    border-radius:50%;
-    background:radial-gradient(circle at 35% 30%, #ded2f2, #c2aee8);
-    box-shadow:inset 0 1px 1px rgba(143,123,196,0.3);
+    width:100%; height:3px;
+    min-height:0;
+    border-radius:2px;
+    background:linear-gradient(180deg, #241608, #4a3320);
+    box-shadow:inset 0 1px 1px rgba(0,0,0,0.6), 0 1px 0 rgba(255,255,255,0.12);
   }
 
   .hint{
@@ -414,6 +457,7 @@
     text-align:center;
     max-width:480px;
     font-weight:600;
+    margin-top:8px;
   }
   .hint b{color:#ffb3d9;}
 
@@ -421,12 +465,18 @@
     .controls{width:78px;}
     .dial-outer{width:72px;height:72px;}
     .dial-grip{width:38px;height:38px;margin:-19px 0 0 -19px;}
-    .vfd-title{max-width:36vw; font-size:0.95rem;}
     .cbtn{width:32px;height:30px;font-size:0.72rem;}
+    .vfd{padding:7px 8px; gap:5px;}
+    .vfd-left{gap:5px;}
+    .vfd-ch{font-size:1.05rem; min-width:1.3ch;}
+    .vfd-title{font-size:0.85rem;}
+    .vfd-right{font-size:0.78rem; gap:4px;}
+    .rec-dot{width:6px;height:6px;}
   }
 
   @media (prefers-reduced-motion: reduce){
     .flicker, .power .led, .rec-dot, .brand .name{animation:none;}
+    .vfd-title.scrolling .marquee-track{animation:none;}
   }
 </style>
 </head>
@@ -440,7 +490,7 @@
 
   <div class="tv">
     <div class="top-row">
-      <div class="plate">MODEL GR-8DOG</div>
+      <div class="plate">MODEL GR-8PUP</div>
       <div class="power"><span class="led"></span> ON AIR</div>
     </div>
 
@@ -471,7 +521,15 @@
         <div class="dial-label">CHANNEL</div>
         <div class="dial-outer" id="dial">
           <div class="dial-ticks" id="dialTicks"></div>
-          <div class="dial-grip" id="dialGrip"></div>
+          <div class="dial-grip" id="dialGrip">
+            <svg class="paw-icon" viewBox="0 0 100 100" aria-hidden="true">
+              <ellipse cx="50" cy="66" rx="21" ry="17"/>
+              <circle cx="23" cy="42" r="10"/>
+              <circle cx="40" cy="23" r="11"/>
+              <circle cx="60" cy="23" r="11"/>
+              <circle cx="77" cy="42" r="10"/>
+            </svg>
+          </div>
         </div>
         <div class="chan-btns">
           <div class="cbtn" id="chDown">&#9664;</div>
@@ -481,10 +539,10 @@
           <div class="dial-label">VOL</div>
           <div class="vol-knob"></div>
         </div>
+        <div class="speaker" id="speaker"></div>
       </div>
     </div>
 
-    <div class="speaker" id="speaker"></div>
   </div>
 
   <div class="hint"><b>Turn the dial</b>, tap the arrows, or press &larr; &rarr; to change the channel.</div>
@@ -492,6 +550,22 @@
 
 <script>
 const CHANNELS = [
+  {
+    "title": "Spider-Pup",
+    "src": "images/spider-pup.jpg"
+  },
+  {
+    "title": "Bark to the Future",
+    "src": "images/bark-to-the-future.jpg"
+  },
+  {
+    "title": "Indiana Bones",
+    "src": "images/indiana-bones.jpg"
+  },
+  {
+    "title": "Titanic",
+    "src": "images/titanic.jpg"
+  },
   {
     "title": "Jaws",
     "src": "images/jaws.jpg"
@@ -505,10 +579,6 @@ const CHANNELS = [
     "src": "images/e-t.jpg"
   },
   {
-    "title": "Bark to the Future",
-    "src": "images/bark-to-the-future.jpg"
-  },
-  {
     "title": "Star Paws",
     "src": "images/star-paws.jpg"
   },
@@ -517,24 +587,12 @@ const CHANNELS = [
     "src": "images/home-alone.jpg"
   },
   {
-    "title": "Spider-Pup",
-    "src": "images/spider-pup.jpg"
-  },
-  {
-    "title": "Titanic",
-    "src": "images/titanic.jpg"
-  },
-  {
     "title": "Jurassic Bark",
     "src": "images/jurassic-bark.jpg"
   },
   {
     "title": "Ghostbusters",
     "src": "images/ghostbusters.jpg"
-  },
-  {
-    "title": "Indiana Bones",
-    "src": "images/indiana-bones.jpg"
   },
   {
     "title": "The Muttrix",
@@ -570,8 +628,179 @@ const speaker = document.getElementById('speaker');
 let current = 0;
 let switching = false;
 
-// speaker grille dots
-for(let i=0;i<28;i++){
+/* ===== Synthesized sound effects (no audio files needed) ===== */
+let audioCtx = null;
+function ensureAudio(){
+  if (!audioCtx) {
+    const AC = window.AudioContext || window.webkitAudioContext;
+    if (AC) audioCtx = new AC();
+  }
+  if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+  return audioCtx;
+}
+
+// short plasticky tick, for buttons/dial notches
+function playTick(freq = 1400, dur = 0.02, vol = 0.14){
+  const ctx = ensureAudio();
+  if (!ctx) return;
+  const t = ctx.currentTime;
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+  osc.type = 'square';
+  osc.frequency.setValueAtTime(freq, t);
+  osc.frequency.exponentialRampToValueAtTime(freq * 0.6, t + dur);
+  gain.gain.setValueAtTime(vol, t);
+  gain.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+  osc.connect(gain).connect(ctx.destination);
+  osc.start(t);
+  osc.stop(t + dur + 0.01);
+}
+
+// mechanical "ka-chunk" for channel changes: low thunk + sharp click layered
+function playChannelChunk(){
+  const ctx = ensureAudio();
+  if (!ctx) return;
+  const t = ctx.currentTime;
+
+  // low thunk (rotary tuner catching a detent)
+  const thunk = ctx.createOscillator();
+  const thunkGain = ctx.createGain();
+  thunk.type = 'sine';
+  thunk.frequency.setValueAtTime(160, t);
+  thunk.frequency.exponentialRampToValueAtTime(55, t + 0.09);
+  thunkGain.gain.setValueAtTime(0.28, t);
+  thunkGain.gain.exponentialRampToValueAtTime(0.0001, t + 0.11);
+  thunk.connect(thunkGain).connect(ctx.destination);
+  thunk.start(t);
+  thunk.stop(t + 0.12);
+
+  // sharp click on top, very slightly delayed
+  const click = ctx.createOscillator();
+  const clickGain = ctx.createGain();
+  click.type = 'square';
+  click.frequency.setValueAtTime(2200, t + 0.01);
+  clickGain.gain.setValueAtTime(0.16, t + 0.01);
+  clickGain.gain.exponentialRampToValueAtTime(0.0001, t + 0.035);
+  click.connect(clickGain).connect(ctx.destination);
+  click.start(t + 0.01);
+  click.stop(t + 0.04);
+}
+
+/* ===== Per-channel musical "stings" — short original motifs, no samples ===== */
+let activeStingNodes = [];
+
+function stopSting(){
+  const ctx = audioCtx;
+  if (!ctx) { activeStingNodes = []; return; }
+  const now = ctx.currentTime;
+  activeStingNodes.forEach(({osc, gain})=>{
+    try{
+      gain.gain.cancelScheduledValues(now);
+      gain.gain.setValueAtTime(Math.max(gain.gain.value, 0.0001), now);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.03);
+      osc.stop(now + 0.04);
+    }catch(e){}
+  });
+  activeStingNodes = [];
+}
+
+function scheduleNote(ctx, freq, start, dur, type='sine', peakVol=0.16){
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+  osc.type = type;
+  osc.frequency.setValueAtTime(freq, start);
+  gain.gain.setValueAtTime(0.0001, start);
+  gain.gain.exponentialRampToValueAtTime(peakVol, start + 0.015);
+  gain.gain.exponentialRampToValueAtTime(0.0001, start + dur);
+  osc.connect(gain).connect(ctx.destination);
+  osc.start(start);
+  osc.stop(start + dur + 0.02);
+  activeStingNodes.push({osc, gain});
+}
+
+const NOTE = {
+  C2:65.41, E2:82.41, F2:87.31,
+  D3:146.83, E3:164.81, F3:174.61, G3:196.00, A3:220.00, B3:246.94,
+  Ab3:207.65, Bb3:233.08, Db3:138.59, Gb3:185.00, C3:130.81,
+  C4:261.63, D4:293.66, E4:329.63, F4:349.23, G4:392.00, A4:440.00,
+  Eb4:311.13, Gb4:369.99, Db4:277.18,
+  C5:523.25, D5:587.33, E5:659.25, G5:783.99
+};
+
+// each entry: (ctx, startTime) => schedules a short original motif
+const STINGS = {
+  'Jaws': (ctx,t)=>{
+    const gaps = [0.5,0.42,0.34,0.26,0.2,0.15];
+    let time = t;
+    gaps.forEach((g,i)=>{
+      scheduleNote(ctx, i%2===0?NOTE.E2:NOTE.F2, time, 0.18, 'sine', 0.22);
+      time += g;
+    });
+  },
+  'The Dogfather': (ctx,t)=>{
+    scheduleNote(ctx, NOTE.D3, t, 0.5, 'sawtooth', 0.13);
+    scheduleNote(ctx, NOTE.F3, t+0.5, 0.5, 'sawtooth', 0.13);
+    scheduleNote(ctx, NOTE.C3, t+1.0, 0.9, 'sawtooth', 0.15);
+  },
+  'E.T.': (ctx,t)=>{
+    [NOTE.C4,NOTE.E4,NOTE.G4,NOTE.C5].forEach((f,i)=> scheduleNote(ctx, f, t+i*0.18, 0.3, 'triangle', 0.15));
+  },
+  'Bark to the Future': (ctx,t)=>{
+    [NOTE.C4,NOTE.E4,NOTE.G4,NOTE.C5,NOTE.G4,NOTE.C5].forEach((f,i)=> scheduleNote(ctx, f, t+i*0.09, 0.15, 'square', 0.13));
+  },
+  'Star Paws': (ctx,t)=>{
+    scheduleNote(ctx, NOTE.C4, t, 0.22, 'sawtooth', 0.17);
+    scheduleNote(ctx, NOTE.G4, t+0.22, 0.22, 'sawtooth', 0.17);
+    scheduleNote(ctx, NOTE.C5, t+0.44, 0.6, 'sawtooth', 0.19);
+  },
+  'Home Alone': (ctx,t)=>{
+    [NOTE.E4,NOTE.G4,NOTE.C5,NOTE.G4,NOTE.E4].forEach((f,i)=> scheduleNote(ctx, f, t+i*0.14, 0.2, 'triangle', 0.15));
+  },
+  'Spider-Pup': (ctx,t)=>{
+    [NOTE.G3,NOTE.C4,NOTE.Eb4,NOTE.G4].forEach((f,i)=> scheduleNote(ctx, f, t+i*0.11, 0.18, 'square', 0.13));
+  },
+  'Titanic': (ctx,t)=>{
+    scheduleNote(ctx, NOTE.A3, t, 0.9, 'sine', 0.13);
+    scheduleNote(ctx, NOTE.C4, t+0.3, 0.9, 'sine', 0.11);
+    scheduleNote(ctx, NOTE.E4, t+0.6, 1.0, 'sine', 0.11);
+  },
+  'Jurassic Bark': (ctx,t)=>{
+    scheduleNote(ctx, NOTE.C3, t, 0.5, 'sawtooth', 0.19);
+    scheduleNote(ctx, NOTE.G3, t+0.45, 0.3, 'sawtooth', 0.17);
+    scheduleNote(ctx, NOTE.C4, t+0.75, 0.6, 'sawtooth', 0.19);
+  },
+  'Ghostbusters': (ctx,t)=>{
+    [NOTE.A3,NOTE.C4,NOTE.E4,NOTE.A3].forEach((f,i)=> scheduleNote(ctx, f, t+i*0.13, 0.16, 'square', 0.14));
+  },
+  'Indiana Bones': (ctx,t)=>{
+    [NOTE.C4,NOTE.F4,NOTE.G4,NOTE.C5].forEach((f,i)=> scheduleNote(ctx, f, t+i*0.16, 0.25, 'sawtooth', 0.17));
+  },
+  'The Muttrix': (ctx,t)=>{
+    [NOTE.C5,NOTE.Gb4,NOTE.Db4,NOTE.C4].forEach((f,i)=> scheduleNote(ctx, f, t+i*0.12, 0.12, 'square', 0.11));
+  },
+  'Pup Fiction': (ctx,t)=>{
+    scheduleNote(ctx, NOTE.E3, t, 0.4, 'triangle', 0.15);
+    scheduleNote(ctx, NOTE.G3, t+0.35, 0.4, 'triangle', 0.15);
+  },
+  'Top Gun': (ctx,t)=>{
+    scheduleNote(ctx, NOTE.E3, t, 1.1, 'sawtooth', 0.15);
+    scheduleNote(ctx, NOTE.B3, t+0.15, 1.0, 'sawtooth', 0.11);
+  },
+  'Mission:Impawsible': (ctx,t)=>{
+    const times = [0,0.16,0.32,0.48,0.64,0.72,0.8];
+    times.forEach((off,i)=> scheduleNote(ctx, i%2===0?NOTE.G3:NOTE.Ab3, t+off, 0.1, 'square', 0.15));
+  }
+};
+
+function playChannelSting(title){
+  const ctx = ensureAudio();
+  if (!ctx) return;
+  const fn = STINGS[title];
+  if (fn) fn(ctx, ctx.currentTime + 0.05);
+}
+
+// speaker grille slats
+for(let i=0;i<16;i++){
   const s = document.createElement('span');
   speaker.appendChild(s);
 }
@@ -641,7 +870,27 @@ function renderImage(idx){
   slideWrap.appendChild(img);
   noSignal.style.opacity = '0';
   chNum.textContent = String(idx+1).padStart(2,'0');
-  chTitle.textContent = ch.title.toUpperCase();
+  setScrollingTitle(ch.title.toUpperCase());
+  playChannelSting(ch.title);
+}
+
+function setScrollingTitle(text){
+  chTitle.classList.remove('scrolling');
+  chTitle.innerHTML = '<span class="marquee-track"><span class="marquee-copy">' + text + '</span></span>';
+  requestAnimationFrame(()=>{
+    const track = chTitle.querySelector('.marquee-track');
+    const copy = chTitle.querySelector('.marquee-copy');
+    if (!track || !copy) return;
+    if (copy.scrollWidth > chTitle.clientWidth){
+      const dist = copy.scrollWidth; // width of one copy incl. its padding-right gap
+      const speed = 45; // px per second
+      const duration = Math.max(3.5, dist / speed);
+      track.appendChild(copy.cloneNode(true)); // second copy only when actually scrolling
+      track.style.setProperty('--scroll-dist', (-dist) + 'px');
+      track.style.animationDuration = duration + 's';
+      chTitle.classList.add('scrolling');
+    }
+  });
 }
 
 async function goToChannel(idx, animate=true){
@@ -650,7 +899,9 @@ async function goToChannel(idx, animate=true){
   if(switching) return;
   switching = true;
   updateDial(idx);
+  stopSting();
   if(animate){
+    playChannelChunk();
     chTitle.textContent = 'TUNING\u2026';
     chNum.textContent = '--';
     await playStatic(320);
@@ -660,8 +911,8 @@ async function goToChannel(idx, animate=true){
   switching = false;
 }
 
-document.getElementById('chUp').addEventListener('click', ()=> goToChannel(current+1));
-document.getElementById('chDown').addEventListener('click', ()=> goToChannel(current-1));
+document.getElementById('chUp').addEventListener('click', ()=> { playTick(); goToChannel(current+1); });
+document.getElementById('chDown').addEventListener('click', ()=> { playTick(); goToChannel(current-1); });
 
 document.addEventListener('keydown', (e)=>{
   if(e.key === 'ArrowRight'){ goToChannel(current+1); }
