@@ -1,0 +1,713 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pupvision &mdash; Channel 3</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=VT323&family=Baloo+2:wght@500;700;800&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --walnut-dark:#a68fd6;
+    --walnut:#c9b3ea;
+    --walnut-light:#e6daf8;
+    --brass:#c9648a;
+    --brass-dim:#e39ab3;
+    --cream:#3a2d52;
+    --amber:#ff9466;
+    --amber-dim:#ffb68f;
+    --screen-black:#241b3a;
+    --crt-green:#8fe3c0;
+  }
+  *{box-sizing:border-box;}
+  html{
+    height:100%;
+    margin:0;
+  }
+  body{
+    min-height:100%;
+    width:100%;
+    margin:0;
+    background:
+      radial-gradient(ellipse at 50% 0%, #6e5a9c 0%, #4c3b76 45%, #2f2350 100%);
+    font-family:'Quicksand', sans-serif;
+    font-weight:600;
+    color:var(--cream);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    overflow-x:hidden;
+    padding:24px 12px;
+  }
+  .room{
+    width:100%;
+    max-width:640px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:14px;
+  }
+  .brand{
+    text-align:center;
+  }
+  .brand{
+    background:linear-gradient(160deg,#2e2348,#211934);
+    padding:16px 30px 12px;
+    border-radius:22px;
+    box-shadow:
+      0 18px 34px -16px rgba(46,35,72,0.5),
+      inset 0 0 0 1px rgba(255,255,255,0.06);
+  }
+  .brand .name{
+    font-family:'Baloo 2', sans-serif;
+    font-weight:800;
+    font-size:2.3rem;
+    letter-spacing:0.15em;
+    color:#fff8fb;
+    text-shadow:
+      0 0 4px #fff,
+      0 0 10px #ff6fb3,
+      0 0 20px #ff6fb3,
+      0 0 42px #ff3d99,
+      0 0 80px #ff3d99;
+    animation:neonFlicker 5s infinite;
+  }
+  .brand .sub{
+    font-size:0.7rem;
+    letter-spacing:0.2em;
+    color:#b8a8d8;
+    margin-top:6px;
+    font-weight:600;
+  }
+  @keyframes neonFlicker{
+    0%, 19%, 21%, 23%, 53%, 55%, 100%{ opacity:1; }
+    20%, 22%, 54%{ opacity:0.85; }
+  }
+
+  /* ===== TV cabinet ===== */
+  .tv{
+    position:relative;
+    width:100%;
+    background:
+      linear-gradient(160deg, var(--walnut-light) 0%, var(--walnut) 45%, var(--walnut-dark) 100%);
+    border-radius:38px;
+    padding:26px 26px 20px;
+    box-shadow:
+      0 30px 55px -20px rgba(143,123,196,0.35),
+      inset 0 0 0 2px rgba(255,255,255,0.5),
+      inset 0 2px 0 rgba(255,255,255,0.6);
+    border:1px solid #dcccf2;
+  }
+  .tv::before{ /* soft dotted texture */
+    content:"";
+    position:absolute; inset:0;
+    border-radius:38px;
+    background-image:radial-gradient(rgba(255,255,255,0.5) 1.5px, transparent 1.5px);
+    background-size:14px 14px;
+    opacity:0.5;
+    mix-blend-mode:overlay;
+    pointer-events:none;
+  }
+  .top-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:16px;
+    position:relative;
+    z-index:1;
+  }
+  .plate{
+    font-family:'Baloo 2', sans-serif;
+    font-weight:700;
+    letter-spacing:0.06em;
+    font-size:0.8rem;
+    color:#fff;
+    background:linear-gradient(180deg, #c8b6ec, #a690dd);
+    padding:5px 12px;
+    border-radius:20px;
+    border:1px solid rgba(255,255,255,0.6);
+  }
+  .power{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    font-size:0.68rem;
+    letter-spacing:0.1em;
+    color:#b5876f;
+    font-weight:600;
+  }
+  .power .led{
+    width:9px;height:9px;border-radius:50%;
+    background:#8fe3c0;
+    box-shadow:0 0 8px 2px rgba(143,227,192,0.8);
+    animation:blink 2.4s infinite;
+  }
+  @keyframes blink{0%,100%{opacity:1;}50%{opacity:0.35;}}
+
+  .screen-area{
+    display:flex;
+    gap:18px;
+    align-items:flex-start;
+  }
+
+  /* ===== Screen ===== */
+  .screen-frame{
+    flex:1 1 0%;
+    min-width:0;
+    background:#3a2d52;
+    border-radius:26px;
+    padding:14px;
+    box-shadow:inset 0 0 0 3px #2b2140, inset 0 0 30px rgba(0,0,0,0.35);
+    position:relative;
+  }
+  .screen{
+    position:relative;
+    width:100%;
+    aspect-ratio:3/4;
+    border-radius:32px/26px;
+    overflow:hidden;
+    background:var(--screen-black);
+    box-shadow:
+      inset 0 0 60px 10px rgba(0,0,0,0.55),
+      inset 0 0 120px rgba(0,0,0,0.35);
+  }
+  .screen-vignette{
+    position:absolute; inset:0;
+    border-radius:32px/26px;
+    background:radial-gradient(ellipse at 50% 45%, transparent 55%, rgba(0,0,0,0.4) 100%);
+    pointer-events:none;
+    z-index:5;
+  }
+  .scanlines{
+    position:absolute; inset:0;
+    background:repeating-linear-gradient(
+      to bottom,
+      rgba(0,0,0,0.28) 0px,
+      rgba(0,0,0,0.28) 1px,
+      transparent 2px,
+      transparent 3px
+    );
+    pointer-events:none;
+    z-index:6;
+    opacity:0.55;
+  }
+  .flicker{
+    position:absolute; inset:0;
+    background:rgba(255,255,255,0.02);
+    pointer-events:none;
+    z-index:6;
+    animation:flick 0.15s infinite;
+  }
+  @keyframes flick{
+    0%{opacity:0.02;} 50%{opacity:0.06;} 100%{opacity:0.02;}
+  }
+  .slide-wrap{
+    position:absolute; inset:0;
+    display:flex; align-items:center; justify-content:center;
+    background:#050403;
+  }
+  .slide-wrap img{
+    width:100%; height:100%; object-fit:contain;
+    filter:saturate(1.08) contrast(1.05) brightness(0.98);
+  }
+  .rgb-split{
+    position:absolute; inset:0;
+    pointer-events:none;
+    z-index:4;
+    mix-blend-mode:screen;
+    opacity:0;
+  }
+
+  /* static noise canvas for channel switch */
+  .static-canvas{
+    position:absolute; inset:0;
+    z-index:8;
+    opacity:0;
+    pointer-events:none;
+  }
+
+  .tracking-bar{
+    position:absolute;
+    left:0; right:0;
+    height:14px;
+    background:repeating-linear-gradient(90deg, rgba(255,255,255,0.6) 0 3px, rgba(255,255,255,0.05) 3px 6px);
+    opacity:0;
+    z-index:7;
+    filter:blur(0.4px);
+    mix-blend-mode:overlay;
+  }
+
+  .no-signal{
+    position:absolute; inset:0;
+    display:flex; align-items:center; justify-content:center;
+    z-index:3;
+    color:#6b5d8f;
+    font-family:'VT323', monospace;
+    font-size:1.4rem;
+    letter-spacing:0.1em;
+  }
+
+  /* VFD readout strip */
+  .vfd{
+    margin-top:12px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    background:linear-gradient(180deg, #362a52, #241b3a);
+    border-radius:14px;
+    padding:8px 14px;
+    box-shadow:inset 0 0 0 1px rgba(255,182,193,0.25), inset 0 0 20px rgba(0,0,0,0.35);
+  }
+  .vfd-left{
+    display:flex; align-items:baseline; gap:10px;
+  }
+  .vfd-ch{
+    font-family:'VT323', monospace;
+    font-size:1.5rem;
+    color:var(--amber);
+    text-shadow:0 0 8px rgba(255,148,102,0.75), 0 0 18px rgba(255,148,102,0.35);
+    letter-spacing:0.05em;
+    min-width:2.4ch;
+  }
+  .vfd-title{
+    font-family:'VT323', monospace;
+    font-size:1.1rem;
+    color:var(--crt-green);
+    text-shadow:0 0 6px rgba(143,227,192,0.6);
+    letter-spacing:0.08em;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    max-width:44vw;
+  }
+  .vfd-right{
+    display:flex; align-items:center; gap:10px;
+    font-family:'VT323', monospace;
+    font-size:0.95rem;
+    color:#c9a8d4;
+  }
+  .rec-dot{
+    width:8px;height:8px;border-radius:50%;
+    background:#ff8fa3;
+    box-shadow:0 0 6px 2px rgba(255,143,163,0.7);
+    animation:blink 1.1s infinite;
+  }
+
+  /* ===== Side control panel ===== */
+  .controls{
+    width:96px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:flex-start;
+    gap:16px;
+    padding-top:4px;
+  }
+  .dial-label{
+    font-family:'Baloo 2', sans-serif;
+    font-weight:700;
+    font-size:0.65rem;
+    letter-spacing:0.15em;
+    color:#8f7bc4;
+  }
+  .dial-outer{
+    position:relative;
+    width:88px; height:88px;
+    border-radius:50%;
+    background:radial-gradient(circle at 35% 30%, #f8f2ff, #ddccf5 70%);
+    box-shadow:0 6px 10px rgba(143,123,196,0.25), inset 0 2px 3px rgba(255,255,255,0.8), inset 0 -4px 6px rgba(143,123,196,0.2);
+    cursor:pointer;
+    user-select:none;
+    touch-action:none;
+  }
+  .dial-ticks{
+    position:absolute; inset:0;
+  }
+  .tick{
+    position:absolute;
+    left:50%; top:50%;
+    width:2px; height:8px;
+    background:#8f7bc4;
+    transform-origin:1px 44px;
+  }
+  .tick.active{
+    background:#8f6fd4;
+    box-shadow:0 0 4px #8f6fd4;
+  }
+  .dial-grip{
+    position:absolute;
+    left:50%; top:50%;
+    width:46px; height:46px;
+    margin:-23px 0 0 -23px;
+    border-radius:50%;
+    background:radial-gradient(circle at 40% 35%, #ffd166, #ffb347 75%);
+    box-shadow:0 3px 6px rgba(143,111,212,0.35), inset 0 1px 2px rgba(255,255,255,0.6);
+    transition:transform 0.35s cubic-bezier(.4,1.8,.5,1);
+  }
+  .dial-grip::after{
+    content:"";
+    position:absolute;
+    top:4px; left:50%;
+    width:3px; height:14px;
+    margin-left:-1.5px;
+    background:#a6672f;
+    border-radius:2px;
+  }
+  .chan-btns{
+    display:flex; gap:8px;
+  }
+  .cbtn{
+    width:38px;height:34px;
+    border-radius:12px;
+    border:1px solid rgba(139,122,196,0.25);
+    background:linear-gradient(180deg,#d9cdf2,#bcabe6);
+    color:#fff;
+    font-family:'Baloo 2',sans-serif;
+    font-weight:700;
+    font-size:0.85rem;
+    letter-spacing:0.05em;
+    box-shadow:0 3px 0 #8f7bc4, inset 0 1px 0 rgba(255,255,255,0.5);
+    cursor:pointer;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .cbtn:active{
+    transform:translateY(2px);
+    box-shadow:0 1px 0 #8f7bc4, inset 0 1px 0 rgba(255,255,255,0.5);
+  }
+  .vol{
+    display:flex; flex-direction:column; align-items:center; gap:6px;
+    margin-top:4px;
+  }
+  .vol-knob{
+    width:40px;height:40px;border-radius:50%;
+    background:radial-gradient(circle at 40% 35%, #ffd166, #ffb347 75%);
+    box-shadow:0 3px 6px rgba(143,111,212,0.3), inset 0 1px 2px rgba(255,255,255,0.6);
+    position:relative;
+  }
+  .vol-knob::after{
+    content:"";
+    position:absolute; top:3px; left:50%;
+    width:3px;height:12px;margin-left:-1.5px;
+    background:#a6672f; border-radius:2px;
+    transform-origin:1.5px 17px;
+    transform:rotate(-35deg);
+  }
+
+  .speaker{
+    margin-top:16px;
+    display:grid;
+    grid-template-columns:repeat(14, 1fr);
+    gap:5px;
+    padding:0 4px;
+  }
+  .speaker span{
+    width:100%; aspect-ratio:1;
+    border-radius:50%;
+    background:radial-gradient(circle at 35% 30%, #ded2f2, #c2aee8);
+    box-shadow:inset 0 1px 1px rgba(143,123,196,0.3);
+  }
+
+  .hint{
+    font-size:0.7rem;
+    color:#d8caf0;
+    letter-spacing:0.02em;
+    text-align:center;
+    max-width:480px;
+    font-weight:600;
+  }
+  .hint b{color:#ffb3d9;}
+
+  @media (max-width:480px){
+    .controls{width:78px;}
+    .dial-outer{width:72px;height:72px;}
+    .dial-grip{width:38px;height:38px;margin:-19px 0 0 -19px;}
+    .vfd-title{max-width:36vw; font-size:0.95rem;}
+    .cbtn{width:32px;height:30px;font-size:0.72rem;}
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .flicker, .power .led, .rec-dot, .brand .name{animation:none;}
+  }
+</style>
+</head>
+<body>
+
+<div class="room">
+  <div class="brand">
+    <div class="name">PUPVISION</div>
+    <div class="sub">FUZZY VIDEO CO. &middot; HI&#8209;FI STEREO &middot; EST. 1986</div>
+  </div>
+
+  <div class="tv">
+    <div class="top-row">
+      <div class="plate">MODEL GR-8DOG</div>
+      <div class="power"><span class="led"></span> ON AIR</div>
+    </div>
+
+    <div class="screen-area">
+      <div class="screen-frame">
+        <div class="screen" id="screen" tabindex="0" aria-label="Television screen, use left and right arrow keys to change channel">
+          <div class="no-signal" id="noSignal">&#9642;&#9642;&#9642; NO SIGNAL &#9642;&#9642;&#9642;</div>
+          <div class="slide-wrap" id="slideWrap"></div>
+          <canvas class="static-canvas" id="staticCanvas"></canvas>
+          <div class="tracking-bar" id="trackBar1" style="top:30%;"></div>
+          <div class="tracking-bar" id="trackBar2" style="top:62%;"></div>
+          <div class="scanlines"></div>
+          <div class="flicker"></div>
+          <div class="screen-vignette"></div>
+        </div>
+        <div class="vfd">
+          <div class="vfd-left">
+            <div class="vfd-ch" id="chNum">--</div>
+            <div class="vfd-title" id="chTitle">TUNING&hellip;</div>
+          </div>
+          <div class="vfd-right">
+            <span class="rec-dot"></span> REC
+          </div>
+        </div>
+      </div>
+
+      <div class="controls">
+        <div class="dial-label">CHANNEL</div>
+        <div class="dial-outer" id="dial">
+          <div class="dial-ticks" id="dialTicks"></div>
+          <div class="dial-grip" id="dialGrip"></div>
+        </div>
+        <div class="chan-btns">
+          <div class="cbtn" id="chDown">&#9664;</div>
+          <div class="cbtn" id="chUp">&#9654;</div>
+        </div>
+        <div class="vol">
+          <div class="dial-label">VOL</div>
+          <div class="vol-knob"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="speaker" id="speaker"></div>
+  </div>
+
+  <div class="hint"><b>Turn the dial</b>, tap the arrows, or press &larr; &rarr; to change the channel.</div>
+</div>
+
+<script>
+const CHANNELS = [
+  {
+    "title": "Jaws",
+    "src": "images/jaws.jpg"
+  },
+  {
+    "title": "The Dogfather",
+    "src": "images/the-dogfather.jpg"
+  },
+  {
+    "title": "E.T.",
+    "src": "images/e-t.jpg"
+  },
+  {
+    "title": "Bark to the Future",
+    "src": "images/bark-to-the-future.jpg"
+  },
+  {
+    "title": "Star Paws",
+    "src": "images/star-paws.jpg"
+  },
+  {
+    "title": "Home Alone",
+    "src": "images/home-alone.jpg"
+  },
+  {
+    "title": "Spider-Pup",
+    "src": "images/spider-pup.jpg"
+  },
+  {
+    "title": "Titanic",
+    "src": "images/titanic.jpg"
+  },
+  {
+    "title": "Jurassic Bark",
+    "src": "images/jurassic-bark.jpg"
+  },
+  {
+    "title": "Ghostbusters",
+    "src": "images/ghostbusters.jpg"
+  },
+  {
+    "title": "Indiana Bones",
+    "src": "images/indiana-bones.jpg"
+  },
+  {
+    "title": "The Muttrix",
+    "src": "images/the-muttrix.jpg"
+  },
+  {
+    "title": "Pup Fiction",
+    "src": "images/pup-fiction.jpg"
+  },
+  {
+    "title": "Top Gun",
+    "src": "images/top-gun.jpg"
+  },
+  {
+    "title": "Mission:Impawsible",
+    "src": "images/mission-impawsible.jpg"
+  }
+];
+
+const slideWrap = document.getElementById('slideWrap');
+const chNum = document.getElementById('chNum');
+const chTitle = document.getElementById('chTitle');
+const noSignal = document.getElementById('noSignal');
+const dial = document.getElementById('dial');
+const dialTicks = document.getElementById('dialTicks');
+const dialGrip = document.getElementById('dialGrip');
+const staticCanvas = document.getElementById('staticCanvas');
+const track1 = document.getElementById('trackBar1');
+const track2 = document.getElementById('trackBar2');
+const screenEl = document.getElementById('screen');
+const speaker = document.getElementById('speaker');
+
+let current = 0;
+let switching = false;
+
+// speaker grille dots
+for(let i=0;i<28;i++){
+  const s = document.createElement('span');
+  speaker.appendChild(s);
+}
+
+// build dial ticks
+const n = CHANNELS.length;
+for(let i=0;i<n;i++){
+  const t = document.createElement('div');
+  t.className = 'tick';
+  const angle = (360/n)*i;
+  t.style.transform = `translate(-1px,-44px) rotate(${angle}deg)`;
+  t.style.transformOrigin = '1px 44px';
+  t.dataset.idx = i;
+  dialTicks.appendChild(t);
+}
+
+function updateDial(idx){
+  const angle = (360/n)*idx;
+  dialGrip.style.transform = `rotate(${angle}deg)`;
+  [...dialTicks.children].forEach((t,i)=> t.classList.toggle('active', i===idx));
+}
+
+// static noise render
+const ctx = staticCanvas.getContext('2d');
+function sizeCanvas(){
+  staticCanvas.width = screenEl.clientWidth;
+  staticCanvas.height = screenEl.clientHeight;
+}
+sizeCanvas();
+window.addEventListener('resize', sizeCanvas);
+
+function drawStatic(){
+  const w = staticCanvas.width, h = staticCanvas.height;
+  if(!w || !h) return;
+  const imgData = ctx.createImageData(w,h);
+  const buf = new Uint32Array(imgData.data.buffer);
+  for(let i=0;i<buf.length;i++){
+    const v = (Math.random()*255)|0;
+    buf[i] = (255<<24) | (v<<16) | (v<<8) | v;
+  }
+  ctx.putImageData(imgData,0,0);
+}
+
+let staticInterval = null;
+function playStatic(ms){
+  return new Promise(resolve=>{
+    staticCanvas.style.opacity = '1';
+    track1.style.opacity = '0.8';
+    track2.style.opacity = '0.5';
+    staticInterval = setInterval(drawStatic, 45);
+    setTimeout(()=>{
+      clearInterval(staticInterval);
+      staticCanvas.style.opacity = '0';
+      track1.style.opacity = '0';
+      track2.style.opacity = '0';
+      resolve();
+    }, ms);
+  });
+}
+
+function renderImage(idx){
+  const ch = CHANNELS[idx];
+  slideWrap.innerHTML = '';
+  const img = document.createElement('img');
+  img.src = ch.src;
+  img.alt = ch.title + ' VHS cover';
+  slideWrap.appendChild(img);
+  noSignal.style.opacity = '0';
+  chNum.textContent = String(idx+1).padStart(2,'0');
+  chTitle.textContent = ch.title.toUpperCase();
+}
+
+async function goToChannel(idx, animate=true){
+  idx = ((idx % n) + n) % n;
+  if(idx === current && slideWrap.children.length) return;
+  if(switching) return;
+  switching = true;
+  updateDial(idx);
+  if(animate){
+    chTitle.textContent = 'TUNING\u2026';
+    chNum.textContent = '--';
+    await playStatic(320);
+  }
+  current = idx;
+  renderImage(idx);
+  switching = false;
+}
+
+document.getElementById('chUp').addEventListener('click', ()=> goToChannel(current+1));
+document.getElementById('chDown').addEventListener('click', ()=> goToChannel(current-1));
+
+document.addEventListener('keydown', (e)=>{
+  if(e.key === 'ArrowRight'){ goToChannel(current+1); }
+  else if(e.key === 'ArrowLeft'){ goToChannel(current-1); }
+  else if(/^[1-9]$/.test(e.key)){ goToChannel(parseInt(e.key,10)-1); }
+});
+
+// click dial ticks to jump directly
+dialTicks.addEventListener('click', (e)=>{
+  const t = e.target.closest('.tick');
+  if(t){ goToChannel(parseInt(t.dataset.idx,10)); }
+});
+
+// drag-to-turn dial
+let dragging = false;
+function angleFromEvent(e, rect){
+  const cx = rect.left + rect.width/2;
+  const cy = rect.top + rect.height/2;
+  const x = (e.touches? e.touches[0].clientX : e.clientX) - cx;
+  const y = (e.touches? e.touches[0].clientY : e.clientY) - cy;
+  return Math.atan2(y,x) * 180/Math.PI;
+}
+let startAngle = 0, startIdx = 0;
+dial.addEventListener('pointerdown', (e)=>{
+  dragging = true;
+  const rect = dial.getBoundingClientRect();
+  startAngle = angleFromEvent(e, rect);
+  startIdx = current;
+  dial.setPointerCapture(e.pointerId);
+});
+dial.addEventListener('pointermove', (e)=>{
+  if(!dragging) return;
+  const rect = dial.getBoundingClientRect();
+  const a = angleFromEvent(e, rect);
+  let delta = a - startAngle;
+  const step = Math.round(delta / (360/n));
+  if(step !== 0){
+    goToChannel(startIdx + step);
+  }
+});
+dial.addEventListener('pointerup', ()=> dragging = false);
+dial.addEventListener('pointercancel', ()=> dragging = false);
+
+// init
+updateDial(0);
+goToChannel(0, true);
+</script>
+</body>
+</html>
