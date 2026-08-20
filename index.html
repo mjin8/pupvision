@@ -570,6 +570,177 @@ const speaker = document.getElementById('speaker');
 let current = 0;
 let switching = false;
 
+/* ===== Synthesized sound effects (no audio files needed) ===== */
+let audioCtx = null;
+function ensureAudio(){
+  if (!audioCtx) {
+    const AC = window.AudioContext || window.webkitAudioContext;
+    if (AC) audioCtx = new AC();
+  }
+  if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+  return audioCtx;
+}
+
+// short plasticky tick, for buttons/dial notches
+function playTick(freq = 1400, dur = 0.02, vol = 0.14){
+  const ctx = ensureAudio();
+  if (!ctx) return;
+  const t = ctx.currentTime;
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+  osc.type = 'square';
+  osc.frequency.setValueAtTime(freq, t);
+  osc.frequency.exponentialRampToValueAtTime(freq * 0.6, t + dur);
+  gain.gain.setValueAtTime(vol, t);
+  gain.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+  osc.connect(gain).connect(ctx.destination);
+  osc.start(t);
+  osc.stop(t + dur + 0.01);
+}
+
+// mechanical "ka-chunk" for channel changes: low thunk + sharp click layered
+function playChannelChunk(){
+  const ctx = ensureAudio();
+  if (!ctx) return;
+  const t = ctx.currentTime;
+
+  // low thunk (rotary tuner catching a detent)
+  const thunk = ctx.createOscillator();
+  const thunkGain = ctx.createGain();
+  thunk.type = 'sine';
+  thunk.frequency.setValueAtTime(160, t);
+  thunk.frequency.exponentialRampToValueAtTime(55, t + 0.09);
+  thunkGain.gain.setValueAtTime(0.28, t);
+  thunkGain.gain.exponentialRampToValueAtTime(0.0001, t + 0.11);
+  thunk.connect(thunkGain).connect(ctx.destination);
+  thunk.start(t);
+  thunk.stop(t + 0.12);
+
+  // sharp click on top, very slightly delayed
+  const click = ctx.createOscillator();
+  const clickGain = ctx.createGain();
+  click.type = 'square';
+  click.frequency.setValueAtTime(2200, t + 0.01);
+  clickGain.gain.setValueAtTime(0.16, t + 0.01);
+  clickGain.gain.exponentialRampToValueAtTime(0.0001, t + 0.035);
+  click.connect(clickGain).connect(ctx.destination);
+  click.start(t + 0.01);
+  click.stop(t + 0.04);
+}
+
+/* ===== Per-channel musical "stings" — short original motifs, no samples ===== */
+let activeStingNodes = [];
+
+function stopSting(){
+  const ctx = audioCtx;
+  if (!ctx) { activeStingNodes = []; return; }
+  const now = ctx.currentTime;
+  activeStingNodes.forEach(({osc, gain})=>{
+    try{
+      gain.gain.cancelScheduledValues(now);
+      gain.gain.setValueAtTime(Math.max(gain.gain.value, 0.0001), now);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.03);
+      osc.stop(now + 0.04);
+    }catch(e){}
+  });
+  activeStingNodes = [];
+}
+
+function scheduleNote(ctx, freq, start, dur, type='sine', peakVol=0.16){
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+  osc.type = type;
+  osc.frequency.setValueAtTime(freq, start);
+  gain.gain.setValueAtTime(0.0001, start);
+  gain.gain.exponentialRampToValueAtTime(peakVol, start + 0.015);
+  gain.gain.exponentialRampToValueAtTime(0.0001, start + dur);
+  osc.connect(gain).connect(ctx.destination);
+  osc.start(start);
+  osc.stop(start + dur + 0.02);
+  activeStingNodes.push({osc, gain});
+}
+
+const NOTE = {
+  C2:65.41, E2:82.41, F2:87.31,
+  D3:146.83, E3:164.81, F3:174.61, G3:196.00, A3:220.00, B3:246.94,
+  Ab3:207.65, Bb3:233.08, Db3:138.59, Gb3:185.00, C3:130.81,
+  C4:261.63, D4:293.66, E4:329.63, F4:349.23, G4:392.00, A4:440.00,
+  Eb4:311.13, Gb4:369.99, Db4:277.18,
+  C5:523.25, D5:587.33, E5:659.25, G5:783.99
+};
+
+// each entry: (ctx, startTime) => schedules a short original motif
+const STINGS = {
+  'Jaws': (ctx,t)=>{
+    const gaps = [0.5,0.42,0.34,0.26,0.2,0.15];
+    let time = t;
+    gaps.forEach((g,i)=>{
+      scheduleNote(ctx, i%2===0?NOTE.E2:NOTE.F2, time, 0.18, 'sine', 0.22);
+      time += g;
+    });
+  },
+  'The Dogfather': (ctx,t)=>{
+    scheduleNote(ctx, NOTE.D3, t, 0.5, 'sawtooth', 0.13);
+    scheduleNote(ctx, NOTE.F3, t+0.5, 0.5, 'sawtooth', 0.13);
+    scheduleNote(ctx, NOTE.C3, t+1.0, 0.9, 'sawtooth', 0.15);
+  },
+  'E.T.': (ctx,t)=>{
+    [NOTE.C4,NOTE.E4,NOTE.G4,NOTE.C5].forEach((f,i)=> scheduleNote(ctx, f, t+i*0.18, 0.3, 'triangle', 0.15));
+  },
+  'Bark to the Future': (ctx,t)=>{
+    [NOTE.C4,NOTE.E4,NOTE.G4,NOTE.C5,NOTE.G4,NOTE.C5].forEach((f,i)=> scheduleNote(ctx, f, t+i*0.09, 0.15, 'square', 0.13));
+  },
+  'Star Paws': (ctx,t)=>{
+    scheduleNote(ctx, NOTE.C4, t, 0.22, 'sawtooth', 0.17);
+    scheduleNote(ctx, NOTE.G4, t+0.22, 0.22, 'sawtooth', 0.17);
+    scheduleNote(ctx, NOTE.C5, t+0.44, 0.6, 'sawtooth', 0.19);
+  },
+  'Home Alone': (ctx,t)=>{
+    [NOTE.E4,NOTE.G4,NOTE.C5,NOTE.G4,NOTE.E4].forEach((f,i)=> scheduleNote(ctx, f, t+i*0.14, 0.2, 'triangle', 0.15));
+  },
+  'Spider-Pup': (ctx,t)=>{
+    [NOTE.G3,NOTE.C4,NOTE.Eb4,NOTE.G4].forEach((f,i)=> scheduleNote(ctx, f, t+i*0.11, 0.18, 'square', 0.13));
+  },
+  'Titanic': (ctx,t)=>{
+    scheduleNote(ctx, NOTE.A3, t, 0.9, 'sine', 0.13);
+    scheduleNote(ctx, NOTE.C4, t+0.3, 0.9, 'sine', 0.11);
+    scheduleNote(ctx, NOTE.E4, t+0.6, 1.0, 'sine', 0.11);
+  },
+  'Jurassic Bark': (ctx,t)=>{
+    scheduleNote(ctx, NOTE.C3, t, 0.5, 'sawtooth', 0.19);
+    scheduleNote(ctx, NOTE.G3, t+0.45, 0.3, 'sawtooth', 0.17);
+    scheduleNote(ctx, NOTE.C4, t+0.75, 0.6, 'sawtooth', 0.19);
+  },
+  'Ghostbusters': (ctx,t)=>{
+    [NOTE.A3,NOTE.C4,NOTE.E4,NOTE.A3].forEach((f,i)=> scheduleNote(ctx, f, t+i*0.13, 0.16, 'square', 0.14));
+  },
+  'Indiana Bones': (ctx,t)=>{
+    [NOTE.C4,NOTE.F4,NOTE.G4,NOTE.C5].forEach((f,i)=> scheduleNote(ctx, f, t+i*0.16, 0.25, 'sawtooth', 0.17));
+  },
+  'The Muttrix': (ctx,t)=>{
+    [NOTE.C5,NOTE.Gb4,NOTE.Db4,NOTE.C4].forEach((f,i)=> scheduleNote(ctx, f, t+i*0.12, 0.12, 'square', 0.11));
+  },
+  'Pup Fiction': (ctx,t)=>{
+    scheduleNote(ctx, NOTE.E3, t, 0.4, 'triangle', 0.15);
+    scheduleNote(ctx, NOTE.G3, t+0.35, 0.4, 'triangle', 0.15);
+  },
+  'Top Gun': (ctx,t)=>{
+    scheduleNote(ctx, NOTE.E3, t, 1.1, 'sawtooth', 0.15);
+    scheduleNote(ctx, NOTE.B3, t+0.15, 1.0, 'sawtooth', 0.11);
+  },
+  'Mission:Impawsible': (ctx,t)=>{
+    const times = [0,0.16,0.32,0.48,0.64,0.72,0.8];
+    times.forEach((off,i)=> scheduleNote(ctx, i%2===0?NOTE.G3:NOTE.Ab3, t+off, 0.1, 'square', 0.15));
+  }
+};
+
+function playChannelSting(title){
+  const ctx = ensureAudio();
+  if (!ctx) return;
+  const fn = STINGS[title];
+  if (fn) fn(ctx, ctx.currentTime + 0.05);
+}
+
 // speaker grille dots
 for(let i=0;i<28;i++){
   const s = document.createElement('span');
@@ -642,6 +813,7 @@ function renderImage(idx){
   noSignal.style.opacity = '0';
   chNum.textContent = String(idx+1).padStart(2,'0');
   chTitle.textContent = ch.title.toUpperCase();
+  playChannelSting(ch.title);
 }
 
 async function goToChannel(idx, animate=true){
@@ -650,7 +822,9 @@ async function goToChannel(idx, animate=true){
   if(switching) return;
   switching = true;
   updateDial(idx);
+  stopSting();
   if(animate){
+    playChannelChunk();
     chTitle.textContent = 'TUNING\u2026';
     chNum.textContent = '--';
     await playStatic(320);
@@ -660,8 +834,8 @@ async function goToChannel(idx, animate=true){
   switching = false;
 }
 
-document.getElementById('chUp').addEventListener('click', ()=> goToChannel(current+1));
-document.getElementById('chDown').addEventListener('click', ()=> goToChannel(current-1));
+document.getElementById('chUp').addEventListener('click', ()=> { playTick(); goToChannel(current+1); });
+document.getElementById('chDown').addEventListener('click', ()=> { playTick(); goToChannel(current-1); });
 
 document.addEventListener('keydown', (e)=>{
   if(e.key === 'ArrowRight'){ goToChannel(current+1); }
